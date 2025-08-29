@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIxStartup - 테스트 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <header class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                    AIxStartup
+                </h1>
+                <p class="text-xl text-gray-600">
+                    스타트업 매출계산기 플랫폼
+                </p>
+            </header>
+
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-6">
+                    🎉 프론트엔드가 정상적으로 작동합니다!
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-blue-900 mb-2">📊 대시보드</h3>
+                        <p class="text-blue-700">매출/지출 현황을 한눈에 확인</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-green-900 mb-2">🤝 파트너 관리</h3>
+                        <p class="text-green-700">거래처 정보를 체계적으로 관리</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-purple-900 mb-2">💰 거래 내역</h3>
+                        <p class="text-purple-700">모든 거래 내역을 추적하고 분석</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-white">
+                <h2 class="text-2xl font-semibold mb-4">🚀 주요 기능</h2>
+                <ul class="space-y-2">
+                    <li>✅ 직관적인 대시보드</li>
+                    <li>✅ 실시간 매출/지출 분석</li>
+                    <li>✅ 파트너 관리 시스템</li>
+                    <li>✅ 거래 내역 추적</li>
+                    <li>✅ 리포트 생성</li>
+                    <li>✅ 모바일 반응형 디자인</li>
+                </ul>
+            </div>
+
+            <div class="mt-8 text-center">
+                <p class="text-gray-600">
+                    현재 시간: <span id="current-time"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleString('ko-KR');
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

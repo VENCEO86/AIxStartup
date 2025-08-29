@@ -1,0 +1,143 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - heading "AIxStartup" [level=1] [ref=e8]
+    - navigation [ref=e9]:
+      - link "대시보드" [ref=e10] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e11] [cursor=pointer]
+        - text: 대시보드
+      - link "파트너 관리" [ref=e13] [cursor=pointer]:
+        - /url: /partners
+        - img [ref=e14] [cursor=pointer]
+        - text: 파트너 관리
+      - link "거래 내역" [ref=e19] [cursor=pointer]:
+        - /url: /transactions
+        - img [ref=e20] [cursor=pointer]
+        - text: 거래 내역
+      - link "설정" [ref=e23] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e24] [cursor=pointer]
+        - text: 설정
+    - button "로그아웃" [ref=e28] [cursor=pointer]:
+      - img [ref=e29] [cursor=pointer]
+      - text: 로그아웃
+  - generic [ref=e34]:
+    - generic [ref=e35]:
+      - heading "대시보드" [level=1] [ref=e36]
+      - paragraph [ref=e37]: 매출 및 지출 현황을 한눈에 확인하세요
+    - generic [ref=e38]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - paragraph [ref=e42]: 총 매출
+          - paragraph [ref=e43]: ₩1,250,000
+          - generic [ref=e44]:
+            - img [ref=e45]
+            - generic [ref=e48]: +12.5%
+        - img [ref=e50]
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: 총 지출
+          - paragraph [ref=e56]: ₩850,000
+          - generic [ref=e57]:
+            - img [ref=e58]
+            - generic [ref=e61]: +8.2%
+        - img [ref=e63]
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - paragraph [ref=e69]: 순이익
+          - paragraph [ref=e70]: ₩400,000
+          - generic [ref=e71]:
+            - img [ref=e72]
+            - generic [ref=e75]: +15.3%
+        - img [ref=e77]
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - paragraph [ref=e83]: 거래처 수
+          - paragraph [ref=e84]: "24"
+          - generic [ref=e85]:
+            - img [ref=e86]
+            - generic [ref=e89]: "+2"
+        - img [ref=e91]
+    - generic [ref=e96]:
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - heading "월별 매출 현황" [level=3] [ref=e99]
+          - img [ref=e100]
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - generic [ref=e104]: 1월
+            - generic [ref=e106]:
+              - paragraph [ref=e107]: ₩100,000
+              - paragraph [ref=e108]: "지출: ₩80,000"
+          - generic [ref=e111]:
+            - generic [ref=e112]: 2월
+            - generic [ref=e114]:
+              - paragraph [ref=e115]: ₩120,000
+              - paragraph [ref=e116]: "지출: ₩90,000"
+          - generic [ref=e119]:
+            - generic [ref=e120]: 3월
+            - generic [ref=e122]:
+              - paragraph [ref=e123]: ₩150,000
+              - paragraph [ref=e124]: "지출: ₩110,000"
+          - generic [ref=e127]:
+            - generic [ref=e128]: 4월
+            - generic [ref=e130]:
+              - paragraph [ref=e131]: ₩180,000
+              - paragraph [ref=e132]: "지출: ₩130,000"
+          - generic [ref=e135]:
+            - generic [ref=e136]: 5월
+            - generic [ref=e138]:
+              - paragraph [ref=e139]: ₩200,000
+              - paragraph [ref=e140]: "지출: ₩140,000"
+          - generic [ref=e143]:
+            - generic [ref=e144]: 6월
+            - generic [ref=e146]:
+              - paragraph [ref=e147]: ₩250,000
+              - paragraph [ref=e148]: "지출: ₩160,000"
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - heading "수익 트렌드" [level=3] [ref=e153]
+          - img [ref=e154]
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - generic [ref=e158]: 1월
+            - generic [ref=e160]: +₩20,000
+          - generic [ref=e163]:
+            - generic [ref=e164]: 2월
+            - generic [ref=e166]: +₩30,000
+          - generic [ref=e169]:
+            - generic [ref=e170]: 3월
+            - generic [ref=e172]: +₩40,000
+          - generic [ref=e175]:
+            - generic [ref=e176]: 4월
+            - generic [ref=e178]: +₩50,000
+          - generic [ref=e181]:
+            - generic [ref=e182]: 5월
+            - generic [ref=e184]: +₩60,000
+          - generic [ref=e187]:
+            - generic [ref=e188]: 6월
+            - generic [ref=e190]: +₩90,000
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - heading "최근 활동" [level=3] [ref=e195]
+        - img [ref=e196]
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - generic [ref=e201]:
+            - paragraph [ref=e202]: 새로운 거래 완료
+            - paragraph [ref=e203]: ABC 회사와 500만원 계약 체결
+          - generic [ref=e204]: 2시간 전
+        - generic [ref=e205]:
+          - generic [ref=e207]:
+            - paragraph [ref=e208]: 지출 등록
+            - paragraph [ref=e209]: 서버 호스팅 비용 30만원 지출
+          - generic [ref=e210]: 1일 전
+        - generic [ref=e211]:
+          - generic [ref=e213]:
+            - paragraph [ref=e214]: 새 파트너 등록
+            - paragraph [ref=e215]: XYZ 기술과 파트너십 체결
+          - generic [ref=e216]: 3일 전
+```
