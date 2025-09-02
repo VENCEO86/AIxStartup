@@ -70,3 +70,4 @@ export class Company extends Model {
   @BelongsTo(() => User)
   user!: User;
 }
+

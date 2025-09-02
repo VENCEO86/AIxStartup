@@ -73,10 +73,10 @@ export interface DashboardData {
 }
 
 export interface AuthRequest extends Request {
-  user?: Express.User;
+  user?: User;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;

@@ -597,3 +597,5 @@ logger.error('Error occurred:', error);
 **작성일**: 2025-08-28  
 **작성자**: AIxStartup 개발팀  
 **최종 업데이트**: 2025-08-28
+
+

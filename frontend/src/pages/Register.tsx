@@ -18,6 +18,8 @@ const Register: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    phone: '',
+    address: '',
     agreeToTerms: false,
     agreeToMarketing: false
   });
@@ -75,15 +77,35 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setSuccess('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      const response = await fetch('http://localhost:5001/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          phone: formData.phone || "",
+          address: formData.address || ""
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // 회원가입 성공
+        setSuccess('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        // 회원가입 실패
+        setError(data.error || '회원가입에 실패했습니다.');
+      }
     } catch (err) {
-      setError('회원가입 중 오류가 발생했습니다.');
+      console.error('회원가입 오류:', err);
+      setError('네트워크 오류가 발생했습니다. 서버 상태를 확인해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -315,6 +337,49 @@ const Register: React.FC = () => {
                   )}
                 </div>
               )}
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                전화번호 (선택사항)
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="+82-10-1234-5678"
+                />
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                주소 (선택사항)
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  autoComplete="street-address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="서울특별시 강남구 테헤란로 123"
+                />
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
             </div>
 
             <div className="space-y-4">

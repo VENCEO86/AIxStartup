@@ -77,3 +77,4 @@ export class Analytics extends Model {
   @BelongsTo(() => User)
   user?: User;
 }
+

@@ -6,7 +6,6 @@ import {
   Mail, 
   Lock, 
   AlertCircle,
-
   ArrowRight
 } from 'lucide-react';
 
@@ -35,17 +34,41 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, accept any email/password
-      if (formData.email && formData.password) {
+      const response = await fetch('http://localhost:5001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // 로그인 성공
+        const { user, token } = data.data;
+        
+        // 토큰과 사용자 정보를 로컬 스토리지에 저장
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // 로그인 상태 유지 옵션
+        if (formData.rememberMe) {
+          localStorage.setItem('rememberMe', 'true');
+        }
+        
+        // 대시보드로 이동
         navigate('/dashboard');
       } else {
-        setError('이메일과 비밀번호를 입력해주세요.');
+        // 로그인 실패
+        setError(data.error || '로그인에 실패했습니다.');
       }
     } catch (err) {
-      setError('로그인 중 오류가 발생했습니다.');
+      console.error('로그인 오류:', err);
+      setError('네트워크 오류가 발생했습니다. 서버 상태를 확인해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -54,6 +77,7 @@ const Login: React.FC = () => {
   const handleSocialLogin = (provider: string) => {
     // Social login implementation
     console.log(`${provider} 로그인 시도`);
+    setError(`${provider} 로그인은 현재 개발 중입니다.`);
   };
 
   return (
@@ -221,8 +245,8 @@ const Login: React.FC = () => {
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <h3 className="text-sm font-medium text-blue-900 mb-2">데모 계정</h3>
             <div className="text-sm text-blue-700 space-y-1">
-              <p>이메일: demo@aixstartup.com</p>
-              <p>비밀번호: password123</p>
+              <p>이메일: admin@aixstartup.com</p>
+              <p>비밀번호: admin123</p>
             </div>
           </div>
         </div>

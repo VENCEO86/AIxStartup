@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user.model';
 import { AuthRequest } from '../types';
+import { User } from '../models/user.model';
 
 export interface JwtPayload {
   userId: string;
@@ -68,8 +68,7 @@ export const requireAdmin = (
     return;
   }
 
-  const user = req.user as User;
-  if (!user.isAdmin) {
+  if (!req.user.isAdmin) {
     res.status(403).json({
       success: false,
       error: 'Admin access required'

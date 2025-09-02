@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
-import { ApiResponse, AuthRequest } from '../types';
+import { AuthRequest } from '../types';
 import { User } from '../models/user.model';
 
 export class AuthController {

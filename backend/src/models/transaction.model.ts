@@ -76,3 +76,4 @@ export class Transaction extends Model {
   @BelongsTo(() => Partner)
   partner!: Partner;
 }
+

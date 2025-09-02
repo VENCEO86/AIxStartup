@@ -69,3 +69,4 @@ export class UrlShortener extends Model {
   @BelongsTo(() => User)
   user!: User;
 }
+

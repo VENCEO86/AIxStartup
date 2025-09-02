@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Partners from './pages/Partners';
 import Transactions from './pages/Transactions';
+import Settings from './pages/Settings';
 import HomePage from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -31,6 +32,11 @@ const App: React.FC = () => {
         <Route path="/transactions" element={
           <AdminLayout>
             <Transactions />
+          </AdminLayout>
+        } />
+        <Route path="/settings" element={
+          <AdminLayout>
+            <Settings />
           </AdminLayout>
         } />
       </Routes>

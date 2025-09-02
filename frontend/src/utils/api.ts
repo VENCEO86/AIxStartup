@@ -111,7 +111,7 @@ class ApiClient {
   }
 
   // File upload
-  async uploadFile<T = any>(url: string, file: File, onProgress?: (progress: number) => void): Promise<T> {
+  async uploadFile<T = any>(url: string, file: File): Promise<T> {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -120,9 +120,12 @@ class ApiClient {
         'Content-Type': 'multipart/form-data',
       },
       onUploadProgress: (progressEvent) => {
-        if (onProgress && progressEvent.total) {
-          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          onProgress(progress);
+        if (progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          // WHY: 업로드 진행률을 계산하지만 실제로는 사용하지 않음
+          console.log(`Upload progress: ${percentCompleted}%`);
         }
       },
     });

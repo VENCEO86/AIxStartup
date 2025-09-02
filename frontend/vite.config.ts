@@ -1,44 +1,34 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@/components': path.resolve(__dirname, './src/components'),
-      '@/pages': path.resolve(__dirname, './src/pages'),
-      '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@/services': path.resolve(__dirname, './src/services'),
-      '@/types': path.resolve(__dirname, './src/types'),
-      '@/utils': path.resolve(__dirname, './src/utils'),
-      '@/styles': path.resolve(__dirname, './src/styles'),
-    },
-  },
   server: {
     port: 3000,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    strictPort: false, // 포트 충돌 시 자동으로 다른 포트 사용
+    host: true,
+    open: false, // 자동 브라우저 열기 비활성화
+    cors: true,
+    hmr: {
+      overlay: false // HMR 오버레이 비활성화로 성능 향상
+    }
   },
   build: {
-    outDir: 'dist',
-    sourcemap: true,
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false, // 개발 시에만 필요
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          charts: ['react-chartjs-2', 'chart.js'],
-          ui: ['framer-motion', 'lucide-react'],
-        },
-      },
-    },
+          router: ['react-router-dom']
+        }
+      }
+    }
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom']
+  }
 })
+
