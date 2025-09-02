@@ -9,50 +9,48 @@ import {
   Trash2, 
   TrendingUp, 
   TrendingDown,
-
   DollarSign,
-
-
-
+  X,
+  ChevronDown
 } from 'lucide-react';
+import TransactionCharts from '../components/TransactionCharts';
 
 interface Transaction {
   id: string;
-  partnerName: string;
+  partnerType: 'new' | 'existing';
   partnerCompany: string;
   type: 'revenue' | 'expense';
   category: string;
+  customCategory?: string;
   amount: number;
   description: string;
   date: string;
   status: 'completed' | 'pending' | 'cancelled';
-  invoiceNumber?: string;
   paymentMethod?: string;
   notes?: string;
 }
 
 const Transactions: React.FC = () => {
-  const [transactions] = useState<Transaction[]>([
+  const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: '1',
-      partnerName: '김철수',
+      partnerType: 'new',
       partnerCompany: 'ABC 기술',
       type: 'revenue',
-      category: '서비스 제공',
+      category: '컨설팅',
       amount: 500000,
       description: '웹사이트 개발 서비스',
       date: '2024-01-15',
       status: 'completed',
-      invoiceNumber: 'INV-2024-001',
       paymentMethod: '계좌이체',
       notes: '첫 번째 프로젝트 완료'
     },
     {
       id: '2',
-      partnerName: '이영희',
+      partnerType: 'existing',
       partnerCompany: 'XYZ 솔루션',
       type: 'expense',
-      category: '서버 호스팅',
+      category: '마케팅',
       amount: 150000,
       description: '클라우드 서버 호스팅 비용',
       date: '2024-01-10',
@@ -62,7 +60,7 @@ const Transactions: React.FC = () => {
     },
     {
       id: '3',
-      partnerName: '박민수',
+      partnerType: 'new',
       partnerCompany: 'DEF 시스템',
       type: 'revenue',
       category: '컨설팅',
@@ -70,13 +68,12 @@ const Transactions: React.FC = () => {
       description: 'IT 컨설팅 서비스',
       date: '2024-01-20',
       status: 'pending',
-      invoiceNumber: 'INV-2024-002',
       paymentMethod: '계좌이체',
       notes: '진행 중인 프로젝트'
     },
     {
       id: '4',
-      partnerName: '최지영',
+      partnerType: 'existing',
       partnerCompany: 'GHI 마케팅',
       type: 'expense',
       category: '마케팅',
@@ -89,15 +86,14 @@ const Transactions: React.FC = () => {
     },
     {
       id: '5',
-      partnerName: '정현우',
+      partnerType: 'new',
       partnerCompany: 'JKL 디자인',
       type: 'revenue',
-      category: '디자인 서비스',
+      category: '디자인',
       amount: 250000,
       description: 'UI/UX 디자인 작업',
       date: '2024-01-18',
       status: 'completed',
-      invoiceNumber: 'INV-2024-003',
       paymentMethod: '계좌이체',
       notes: '모바일 앱 디자인 완료'
     }
@@ -107,21 +103,39 @@ const Transactions: React.FC = () => {
   const [filterType, setFilterType] = useState<'all' | 'revenue' | 'expense'>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'pending' | 'cancelled'>('all');
   const [filterDate, setFilterDate] = useState('');
+  const [filterPartnerType, setFilterPartnerType] = useState<'all' | 'new' | 'existing'>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'partner'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+
+  // 새 거래 추가 폼 상태
+  const [newTransaction, setNewTransaction] = useState({
+    partnerType: 'new' as 'new' | 'existing',
+    partnerCompany: '',
+    type: 'revenue' as 'revenue' | 'expense',
+    category: '유통',
+    customCategory: '',
+    amount: '',
+    description: '',
+    date: new Date().toISOString().split('T')[0],
+    paymentMethod: '계좌이체',
+    notes: ''
+  });
 
   const filteredTransactions = transactions
     .filter(transaction => {
-      const matchesSearch = transaction.partnerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           transaction.partnerCompany.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch = transaction.partnerCompany.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesType = filterType === 'all' || transaction.type === filterType;
       const matchesStatus = filterStatus === 'all' || transaction.status === filterStatus;
       const matchesDate = !filterDate || transaction.date === filterDate;
+      const matchesPartnerType = filterPartnerType === 'all' || transaction.partnerType === filterPartnerType;
+      const matchesCategory = filterCategory === 'all' || transaction.category === filterCategory;
       
-      return matchesSearch && matchesType && matchesStatus && matchesDate;
+      return matchesSearch && matchesType && matchesStatus && matchesDate && matchesPartnerType && matchesCategory;
     })
     .sort((a, b) => {
       let comparison = 0;
@@ -133,7 +147,7 @@ const Transactions: React.FC = () => {
           comparison = a.amount - b.amount;
           break;
         case 'partner':
-          comparison = a.partnerName.localeCompare(b.partnerName);
+          comparison = a.partnerCompany.localeCompare(b.partnerCompany);
           break;
       }
       return sortOrder === 'asc' ? comparison : -comparison;
@@ -150,10 +164,7 @@ const Transactions: React.FC = () => {
   const netProfit = totalRevenue - totalExpense;
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ko-KR', {
-      style: 'currency',
-      currency: 'KRW'
-    }).format(amount);
+    return amount.toLocaleString('ko-KR');
   };
 
   const getTypeBadge = (type: string) => {
@@ -171,18 +182,79 @@ const Transactions: React.FC = () => {
     return badges[status as keyof typeof badges] || 'bg-gray-100 text-gray-800';
   };
 
+  const getPartnerTypeBadge = (partnerType: string) => {
+    return partnerType === 'new' 
+      ? 'bg-blue-100 text-blue-800' 
+      : 'bg-purple-100 text-purple-800';
+  };
+
+  const handleAddTransaction = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newTransaction.partnerCompany || !newTransaction.amount || !newTransaction.description) {
+      alert('필수 항목을 입력해주세요.');
+      return;
+    }
+
+    const transaction: Transaction = {
+      id: Date.now().toString(),
+      partnerType: newTransaction.partnerType,
+      partnerCompany: newTransaction.partnerCompany,
+      type: newTransaction.type,
+      category: newTransaction.category === '기타' ? newTransaction.customCategory || '기타' : newTransaction.category,
+      customCategory: newTransaction.customCategory,
+      amount: parseInt(newTransaction.amount),
+      description: newTransaction.description,
+      date: newTransaction.date,
+      status: 'completed',
+      paymentMethod: newTransaction.paymentMethod,
+      notes: newTransaction.notes
+    };
+
+    setTransactions([transaction, ...transactions]);
+    setShowAddModal(false);
+    
+    // 폼 초기화
+    setNewTransaction({
+      partnerType: 'new',
+      partnerCompany: '',
+      type: 'revenue',
+      category: '유통',
+      customCategory: '',
+      amount: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0],
+      paymentMethod: '계좌이체',
+      notes: ''
+    });
+  };
+
   const TransactionModal: React.FC = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h3 className="text-lg font-semibold mb-4">
-          {selectedTransaction ? '거래 내역 상세' : '새 거래 추가'}
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">
+            {selectedTransaction ? '거래 내역 상세' : '새 거래 추가'}
+          </h3>
+          <button
+            onClick={() => {
+              setSelectedTransaction(null);
+              setShowAddModal(false);
+            }}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
         {selectedTransaction ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">파트너명</label>
-                <p className="text-gray-900">{selectedTransaction.partnerName}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">거래처 구분</label>
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPartnerTypeBadge(selectedTransaction.partnerType)}`}>
+                  {selectedTransaction.partnerType === 'new' ? '신규거래처' : '기거래처'}
+                </span>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">회사명</label>
@@ -191,7 +263,7 @@ const Transactions: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">거래 유형</label>
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getTypeBadge(selectedTransaction.type)}`}>
-                  {selectedTransaction.type === 'revenue' ? '수입' : '지출'}
+                  {selectedTransaction.type === 'revenue' ? '매출' : '매입'}
                 </span>
               </div>
               <div>
@@ -214,12 +286,6 @@ const Transactions: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
               <p className="text-gray-900">{selectedTransaction.description}</p>
             </div>
-            {selectedTransaction.invoiceNumber && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">송장번호</label>
-                <p className="text-gray-900">{selectedTransaction.invoiceNumber}</p>
-              </div>
-            )}
             {selectedTransaction.paymentMethod && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">결제 방법</label>
@@ -245,50 +311,82 @@ const Transactions: React.FC = () => {
             </div>
           </div>
         ) : (
-          <form className="space-y-4">
+          <form onSubmit={handleAddTransaction} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">파트너명</label>
-                <input
-                  type="text"
+                <label className="block text-sm font-medium text-gray-700 mb-1">거래처 구분</label>
+                <select 
+                  value={newTransaction.partnerType}
+                  onChange={(e) => setNewTransaction({...newTransaction, partnerType: e.target.value as 'new' | 'existing'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                >
+                  <option value="new">신규거래처</option>
+                  <option value="existing">기거래처</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">회사명</label>
                 <input
                   type="text"
+                  value={newTransaction.partnerCompany}
+                  onChange={(e) => setNewTransaction({...newTransaction, partnerCompany: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="회사명을 입력하세요"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">거래 유형</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="revenue">수입</option>
-                  <option value="expense">지출</option>
+                <select 
+                  value={newTransaction.type}
+                  onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value as 'revenue' | 'expense'})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="revenue">매출</option>
+                  <option value="expense">매입</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="service">서비스 제공</option>
-                  <option value="consulting">컨설팅</option>
-                  <option value="hosting">서버 호스팅</option>
-                  <option value="marketing">마케팅</option>
-                  <option value="design">디자인</option>
+                <select 
+                  value={newTransaction.category}
+                  onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="유통">유통</option>
+                  <option value="컨설팅">컨설팅</option>
+                  <option value="마케팅">마케팅</option>
+                  <option value="디자인">디자인</option>
+                  <option value="기타">기타</option>
                 </select>
               </div>
+              {newTransaction.category === '기타' && (
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">기타 카테고리</label>
+                  <input
+                    type="text"
+                    value={newTransaction.customCategory}
+                    onChange={(e) => setNewTransaction({...newTransaction, customCategory: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="카테고리를 직접 입력하세요"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">금액</label>
                 <input
                   type="number"
+                  value={newTransaction.amount}
+                  onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="금액을 입력하세요"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">날짜</label>
                 <input
                   type="date"
+                  value={newTransaction.date}
+                  onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -297,8 +395,36 @@ const Transactions: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
               <textarea
                 rows={3}
+                value={newTransaction.description}
+                onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="거래 내용을 설명하세요"
               />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">결제 방법</label>
+                <select 
+                  value={newTransaction.paymentMethod}
+                  onChange={(e) => setNewTransaction({...newTransaction, paymentMethod: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="계좌이체">계좌이체</option>
+                  <option value="신용카드">신용카드</option>
+                  <option value="현금">현금</option>
+                  <option value="기타">기타</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">메모</label>
+                <input
+                  type="text"
+                  value={newTransaction.notes}
+                  onChange={(e) => setNewTransaction({...newTransaction, notes: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="추가 메모"
+                />
+              </div>
             </div>
             <div className="flex space-x-3 pt-4">
               <button
@@ -347,44 +473,8 @@ const Transactions: React.FC = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">총 수입</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center">
-              <div className="p-3 bg-red-100 rounded-lg">
-                <TrendingDown className="w-6 h-6 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">총 지출</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalExpense)}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <DollarSign className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">순이익</p>
-                <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {formatCurrency(netProfit)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* 데이터 시각화 차트 */}
+        <TransactionCharts transactions={transactions} />
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -405,8 +495,8 @@ const Transactions: React.FC = () => {
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">모든 유형</option>
-              <option value="revenue">수입</option>
-              <option value="expense">지출</option>
+              <option value="revenue">매출</option>
+              <option value="expense">매입</option>
             </select>
             <select
               value={filterStatus}
@@ -437,13 +527,71 @@ const Transactions: React.FC = () => {
               <option value="date-asc">날짜 (오래된순)</option>
               <option value="amount-desc">금액 (높은순)</option>
               <option value="amount-asc">금액 (낮은순)</option>
-              <option value="partner-asc">파트너 (가나다순)</option>
+              <option value="partner-asc">거래처 (가나다순)</option>
             </select>
-            <button className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+            <button 
+              onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
+              className={`inline-flex items-center justify-center px-4 py-2 border rounded-md transition-colors ${
+                showAdvancedFilter 
+                  ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
               <Filter className="w-5 h-5 mr-2" />
               고급 필터
+              <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${showAdvancedFilter ? 'rotate-180' : ''}`} />
             </button>
           </div>
+
+          {/* 고급 필터 확장 영역 */}
+          {showAdvancedFilter && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">거래처 구분</label>
+                  <select
+                    value={filterPartnerType}
+                    onChange={(e) => setFilterPartnerType(e.target.value as any)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="all">모든 구분</option>
+                    <option value="new">신규거래처</option>
+                    <option value="existing">기거래처</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="all">모든 카테고리</option>
+                    <option value="유통">유통</option>
+                    <option value="컨설팅">컨설팅</option>
+                    <option value="마케팅">마케팅</option>
+                    <option value="디자인">디자인</option>
+                    <option value="기타">기타</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setFilterType('all');
+                      setFilterStatus('all');
+                      setFilterDate('');
+                      setFilterPartnerType('all');
+                      setFilterCategory('all');
+                    }}
+                    className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                  >
+                    필터 초기화
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Transactions List */}
@@ -454,6 +602,9 @@ const Transactions: React.FC = () => {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     거래 정보
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    거래처 구분
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     유형
@@ -478,13 +629,18 @@ const Transactions: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">{transaction.description}</div>
-                        <div className="text-sm text-gray-500">{transaction.partnerName} - {transaction.partnerCompany}</div>
+                        <div className="text-sm text-gray-500">{transaction.partnerCompany}</div>
                         <div className="text-sm text-gray-500">{transaction.category}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPartnerTypeBadge(transaction.partnerType)}`}>
+                        {transaction.partnerType === 'new' ? '신규거래처' : '기거래처'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getTypeBadge(transaction.type)}`}>
-                        {transaction.type === 'revenue' ? '수입' : '지출'}
+                        {transaction.type === 'revenue' ? '매출' : '매입'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

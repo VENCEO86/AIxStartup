@@ -14,8 +14,23 @@ services:
     # 선택: 헬스체크 엔드포인트가 있으면 열어두면 좋아요
     # healthCheckPath: "/healthz"
 
+<<<<<<< HEAD
   - type: static_site
     name: aix-frontend
     buildCommand: "npm --prefix frontend ci && npm --prefix frontend run build"
     staticPublishPath: "frontend/dist"
     autoDeploy: true
+=======
+  - type: redis
+    name: aixstartup-redis
+    ipAllowList: []
+    plan: free
+
+databases:
+  - name: aixstartup-postgres
+    databaseName: aixstartup
+    user: aixstartup_user
+    plan: free
+
+
+>>>>>>> 3685f7b (feat: 홈 화면 문구 수정 및 버튼 정렬 (2025-09-02))

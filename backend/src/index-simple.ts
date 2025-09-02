@@ -57,10 +57,10 @@ app.use('*', (req, res) => {
 });
 
 // Global error handler
-app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((error: Error, req: express.Request, res: express.Response) => {
   console.error('Global error handler:', error);
   
-  res.status(error.status || 500).json({
+  res.status(500).json({
     success: false,
     error: error.message || 'Internal server error'
   });
@@ -83,3 +83,5 @@ process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully...');
   process.exit(0);
 });
+
+

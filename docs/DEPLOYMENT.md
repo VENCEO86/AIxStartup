@@ -123,3 +123,5 @@ npm run dev
 - Node.js 버전 확인 (18+ 권장)
 - 의존성 설치 확인: `npm ci`
 - TypeScript 컴파일 오류 확인
+
+

@@ -5,3 +5,5 @@ export { Partner } from './partner.model';
 export { Transaction } from './transaction.model';
 export { UrlShortener } from './url-shortener.model';
 export { Analytics } from './analytics.model';
+
+

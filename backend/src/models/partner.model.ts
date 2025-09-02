@@ -86,3 +86,4 @@ export class Partner extends Model {
   @HasMany(() => Transaction)
   transactions!: Transaction[];
 }
+

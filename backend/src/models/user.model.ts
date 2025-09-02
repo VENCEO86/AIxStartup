@@ -76,3 +76,4 @@ export class User extends Model {
   @HasMany(() => Transaction)
   transactions!: Transaction[];
 }
+

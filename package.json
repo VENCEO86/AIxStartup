@@ -14,7 +14,21 @@
     "setup": "npm run install:all && npm run setup:db",
     "setup:db": "cd backend && npm run setup:db",
     "test:e2e": "playwright test",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "typecheck": "npm run typecheck:frontend && npm run typecheck:backend",
+    "typecheck:frontend": "cd frontend && npm run typecheck",
+    "typecheck:backend": "cd backend && npm run typecheck",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "cd backend && npm run test",
+    "fix": "npm run fix:frontend && npm run fix:backend",
+    "fix:frontend": "cd frontend && npm run fix",
+    "fix:backend": "cd backend && npm run fix",
+    "preview": "npm run preview:backend",
+    "preview:backend": "cd backend && npm run preview"
   },
   "keywords": [
     "startup",
@@ -25,6 +39,10 @@
   ],
   "author": "AIxStartup Team",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
     "concurrently": "^8.2.2"
