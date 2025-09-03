@@ -7,9 +7,6 @@ import {
   Eye, 
   Edit, 
   Trash2, 
-  TrendingUp, 
-  TrendingDown,
-  DollarSign,
   X,
   ChevronDown
 } from 'lucide-react';
@@ -153,15 +150,7 @@ const Transactions: React.FC = () => {
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
-  const totalRevenue = transactions
-    .filter(t => t.type === 'revenue' && t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalExpense = transactions
-    .filter(t => t.type === 'expense' && t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const netProfit = totalRevenue - totalExpense;
 
   const formatCurrency = (amount: number) => {
     return amount.toLocaleString('ko-KR');

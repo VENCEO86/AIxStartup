@@ -12,8 +12,8 @@ import {
   Filler,
   ArcElement,
 } from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import { TrendingUp, TrendingDown, BarChart3, LineChart, Calendar } from 'lucide-react';
+import { Bar, Doughnut } from 'react-chartjs-2';
+import { TrendingUp, TrendingDown, BarChart3, Calendar } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -64,13 +64,9 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ transactions }) =
 
   const [selectedYear, setSelectedYear] = useState<number>(yearRange.max);
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
-  const [chartType, setChartType] = useState<'line' | 'bar'>('bar');
 
   // 선택된 연도와 월에 따른 데이터 생성
   const chartData = useMemo(() => {
-    const yearStart = new Date(selectedYear, 0, 1);
-    const yearEnd = new Date(selectedYear, 11, 31);
-    
     // 연도별 월 데이터 생성
     const months = Array.from({ length: 12 }, (_, i) => i);
     const labels = months.map(month => `${month + 1}월`);
@@ -235,24 +231,16 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ transactions }) =
         {/* 차트 타입 선택 */}
         <div className="flex items-center space-x-2 mt-4 lg:mt-0">
           <button
-            onClick={() => setChartType('line')}
-            className={`p-2 rounded-lg transition-all ${
-              chartType === 'line' 
-                ? 'bg-blue-100 text-blue-600 border-2 border-blue-300' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            title="선형 차트"
+            onClick={() => {}} // 현재는 막대 차트만 사용
+            className="p-2 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed opacity-50"
+            title="선형 차트 (현재 비활성화)"
+            disabled
           >
-            <LineChart className="w-5 h-5" />
+            <BarChart3 className="w-5 h-5" />
           </button>
           <button
-            onClick={() => setChartType('bar')}
-            className={`p-2 rounded-lg transition-all ${
-              chartType === 'bar' 
-                ? 'bg-blue-100 text-blue-600 border-2 border-blue-300' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            title="막대 차트"
+            className="p-2 rounded-lg bg-blue-100 text-blue-600 border-2 border-blue-300"
+            title="막대 차트 (현재 활성화)"
           >
             <BarChart3 className="w-5 h-5" />
           </button>
